@@ -156,11 +156,11 @@ sub built_by {
 sub lazy {
     if ($_[0]->isa('mop::attribute')) {
         my $meta    = shift;
-        my $builder = shift;
+        $meta->make_attribute_lazy;
         $meta->bind('before:FETCH_DATA' => sub {
-            my (undef, $instance) = @_;
+            my ($meta, $instance) = @_;
             if (!exists $meta->storage->{$instance}) {
-                $meta->store_data_in_slot_for($instance, $instance->$builder());
+                $meta->store_default_in_slot_for($instance);
             }
         });
     }

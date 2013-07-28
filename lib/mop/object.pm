@@ -42,6 +42,7 @@ sub new {
         if ( exists $args{ $attr->key_name }) {
             $attr->store_data_in_slot_for( $self, $args{ $attr->key_name } )
         } else {
+            next if $attr->is_attribute_lazy;
             $attr->store_default_in_slot_for( $self );
         }
     }

@@ -16,14 +16,16 @@ init_attribute_storage(my %name);
 init_attribute_storage(my %default);
 init_attribute_storage(my %storage);
 init_attribute_storage(my %associated_meta);
+init_attribute_storage(my %lazy);
 
 sub new {
     my $class = shift;
     my %args  = @_;
     my $self = $class->SUPER::new;
     $name{ $self }    = \($args{'name'});
-    $default{ $self } = \($args{'default'}) if exists $args{'default'};
-    $storage{ $self } = \($args{'storage'}) if exists $args{'storage'};
+    $default{$self} = \( $args{'default'} ) if exists $args{'default'};
+    $storage{$self} = \( $args{'storage'} ) if exists $args{'storage'};
+    $lazy{$self}    = \( $args{'lazy'} )    if exists $args{'lazy'};
     $self
 }
 
@@ -54,7 +56,7 @@ sub get_default {
             $value  = Clone::clone( $value  );
         }
         elsif ( ref $value  eq 'CODE' ) {
-            $value  = $value ->();
+            $value  = $value->();
         }
         else {
             die "References of type(" . ref $value  . ") are not supported";
@@ -62,6 +64,9 @@ sub get_default {
     }
     $value
 }
+
+sub is_attribute_lazy { $lazy{ $_[0] } // 0; }
+sub make_attribute_lazy { $lazy{ $_[0] } = \1; }
 
 sub storage { ${ $storage{ $_[0] } } }
 
