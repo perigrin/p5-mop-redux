@@ -152,6 +152,21 @@ sub __INIT_METACLASS__ {
     $METACLASS->add_method( mop::method->new( name => 'fetch_data_in_slot_for',    body => \&fetch_data_in_slot_for    ) );
     $METACLASS->add_method( mop::method->new( name => 'store_data_in_slot_for',    body => \&store_data_in_slot_for    ) );
     $METACLASS->add_method( mop::method->new( name => 'store_default_in_slot_for', body => \&store_default_in_slot_for ) );
+
+    $METACLASS->add_method(
+        mop::method->new(
+            name => 'is_attribute_lazy',
+            body => \&is_attribute_lazy
+        )
+    );
+
+    $METACLASS->add_method(
+        mop::method->new(
+            name => 'make_attribute_lazy',
+            body => \&make_attribute_lazy
+        )
+    );
+
     $METACLASS;
 }
 
