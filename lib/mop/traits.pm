@@ -163,6 +163,17 @@ sub lazy {
                 $meta->store_default_in_slot_for($instance);
             }
         });
+    } elsif ($_[0]->isa('mop::class')) {
+        my $meta = shift;
+        foreach my $attr ( values %{ $meta->attributes } ) {
+            $attr->make_attribute_lazy;
+            $attr->bind('before:FETCH_DATA' => sub {
+                my ($meta, $instance) = @_;
+                if (!exists $meta->storage->{$instance}) {
+                    $meta->store_default_in_slot_for($instance);
+                }
+            });
+        }
     }
 }
 
