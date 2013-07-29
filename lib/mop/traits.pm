@@ -156,7 +156,7 @@ sub built_by {
 sub lazy {
     if ($_[0]->isa('mop::attribute')) {
         my $meta    = shift;
-        $meta->make_attribute_lazy;
+        $meta->enable_trait('lazy');
         $meta->bind('before:FETCH_DATA' => sub {
             my ($meta, $instance) = @_;
             if (!exists $meta->storage->{$instance}) {
@@ -166,7 +166,7 @@ sub lazy {
     } elsif ($_[0]->isa('mop::class')) {
         my $meta = shift;
         foreach my $attr ( values %{ $meta->attributes } ) {
-            $attr->make_attribute_lazy;
+            $attr->enable_trait('lazy');
             $attr->bind('before:FETCH_DATA' => sub {
                 my ($meta, $instance) = @_;
                 if (!exists $meta->storage->{$instance}) {

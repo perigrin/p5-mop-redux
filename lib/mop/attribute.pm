@@ -16,7 +16,7 @@ init_attribute_storage(my %name);
 init_attribute_storage(my %default);
 init_attribute_storage(my %storage);
 init_attribute_storage(my %associated_meta);
-init_attribute_storage(my %lazy);
+init_attribute_storage(my %traits);
 
 sub new {
     my $class = shift;
@@ -25,7 +25,7 @@ sub new {
     $name{ $self }    = \($args{'name'});
     $default{$self} = \( $args{'default'} ) if exists $args{'default'};
     $storage{$self} = \( $args{'storage'} ) if exists $args{'storage'};
-    $lazy{$self}    = \( $args{'lazy'} )    if exists $args{'lazy'};
+    $traits{$self}    = \( $args{'traits'} )    if exists $args{'traits'};
     $self
 }
 
@@ -65,8 +65,9 @@ sub get_default {
     $value
 }
 
-sub is_attribute_lazy { $lazy{ $_[0] } // 0; }
-sub make_attribute_lazy { $lazy{ $_[0] } = \1; }
+sub has_trait      { ($traits{ $_[0] }{ $_[1] } // 0) == 1; }
+sub enable_trait   { $traits{ $_[0] }{ $_[1] } = 1; }
+sub disable_trait  { $traits{ $_[0] }{ $_[1] } = 0; }
 
 sub storage { ${ $storage{ $_[0] } } }
 
@@ -155,15 +156,22 @@ sub __INIT_METACLASS__ {
 
     $METACLASS->add_method(
         mop::method->new(
-            name => 'is_attribute_lazy',
-            body => \&is_attribute_lazy
+            name => 'has_trait',
+            body => \&has_trait
         )
     );
 
     $METACLASS->add_method(
         mop::method->new(
-            name => 'make_attribute_lazy',
-            body => \&make_attribute_lazy
+            name => 'enable_trait',
+            body => \&enable_trait
+        )
+    );
+    
+    $METACLASS->add_method(
+        mop::method->new(
+            name => 'disable_trait',
+            body => \&disable_trait
         )
     );
 
